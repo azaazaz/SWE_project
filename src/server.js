@@ -1,29 +1,51 @@
 // src/server.js
 const express = require('express');
 const path = require('path');
+const helmet = require('helmet');
+const morgan = require('morgan');
+const cors = require('cors');
+
+const quizRouter = require('./routes/quiz');
+const sushiRouter = require('./routes/sushi');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Serve static files from public (if you add a public/ folder)
-app.use(express.static(path.join(__dirname, 'public')));
+// Security + logging middlewares
+app.use(helmet());
+app.use(express.json({ limit: '1mb' }));
+app.use(morgan('dev'));
+app.use(cors());
 
-// Simple API endpoint to sanity-check the server
+// Serve static files (images, frontend) from src/public if present
+const publicPath = path.join(__dirname, 'public');
+app.use(express.static(publicPath));
+
+// API routes
+app.use('/api/questions', quizRouter); // GET /api/questions
+app.use('/api/sushi', sushiRouter);     // GET /api/sushi, POST /api/result
+
+// Health-check (useful for CI / monitoring)
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'SushiMatch backend running' });
 });
 
-// Example: endpoint to return questions (we'll replace this with real data later)
-app.get('/api/questions', (req, res) => {
-  res.json({ message: 'Add your quizQuestions.json and serve it here.' });
+// Generic 404 for unknown API routes
+app.use('/api', (req, res) => {
+  res.status(404).json({ error: 'API route not found' });
 });
 
-// only start the server when this file is run directly (useful for tests)
+// Error handler
+app.use((err, req, res, next) => {
+  console.error('Unhandled error:', err);
+  res.status(500).json({ error: 'Internal server error' });
+});
+
+// Start server only when run directly (ease testing)
 if (require.main === module) {
   app.listen(PORT, () => {
-    console.log(`Server is running at http://localhost:${PORT}`);
+    console.log(`SushiMatch backend listening: http://localhost:${PORT}`);
   });
 }
 
-// export app for testing or programmatic use
 module.exports = app;
