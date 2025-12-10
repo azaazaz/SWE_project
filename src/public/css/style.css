@@ -21,7 +21,7 @@ main{display:flex;align-items:center;justify-content:center;padding:24px}
 .view{display:none}
 .view.active{display:block}
 
-/* Quiz layout */
+/* Quiz  layout */
 .quiz-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
 .quiz-title{font-weight:600;color:var(--muted)}
 .question-text{margin:8px 0 16px;font-size:20px}
