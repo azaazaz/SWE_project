@@ -1,12 +1,10 @@
-# A descriptive name for your workflow
-name: Node.js SWEProject
+name: Node.js CI
 
-# 'on' defines the events that trigger the workflow
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "Azerin" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "Azerin" ]
 
 jobs:
   build-and-test:
@@ -22,7 +20,7 @@ jobs:
           node-version: '20'
 
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --include=dev
 
       - name: Run tests
-        run: npm test
+        run: npx jest --runInBand
